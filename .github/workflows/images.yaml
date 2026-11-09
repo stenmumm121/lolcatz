@@ -65,6 +65,28 @@ jobs:
           npx tsc --noEmit
           npx playwright install --with-deps chromium
           npm run test:browser
+            - name: Test frontend
+        working-directory: services/frontend
+        run: |
+          npm ci
+          npm test
+          npx tsc --noEmit
+          npx playwright install --with-deps chromium
+          npm run test:browser
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: services/thumbnailer/requirements.lock
+      - name: Test consumers
+        env:
+          TEST_DATABASE_URL: postgres://lolcatz:lolcatz@localhost:5432/lolcatz?sslmode=disable
+        run: |
+          pip install --require-hashes -r services/thumbnailer/requirements.lock
+          pip install --no-index --no-deps -r services/thumbnailer/requirements.txt
+          PYTHONPATH=services python3 -m unittest discover -s services/tests
+          PYTHONPATH=services python3 -m unittest discover -s services/thumbnailer
+          PYTHONPATH=services python3 -m unittest discover -s services/tagger -t services
       - name: Test consumers
         env:
           TEST_DATABASE_URL: postgres://lolcatz:lolcatz@localhost:5432/lolcatz?sslmode=disable
