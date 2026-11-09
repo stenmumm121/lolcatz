@@ -96,7 +96,6 @@ jobs:
           PYTHONPATH=services python3 -m unittest discover -s services/tests
           PYTHONPATH=services python3 -m unittest discover -s services/thumbnailer
           PYTHONPATH=services python3 -m unittest discover -s services/tagger -t services
-
   compose:
     runs-on: ubuntu-latest
     steps:
